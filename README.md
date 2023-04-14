@@ -18,7 +18,7 @@ javac Wordle.java
 Run the program using:
 
 ```
-java Wordle [word1] [word2] [word3] ...
+java Wordle
 ```
 
 Note: The words provided should not exceed the maximum number of tries (6).
