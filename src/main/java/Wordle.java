@@ -1,35 +1,41 @@
 import java.io.*;
+import java.util.Scanner;
 
 public class Wordle {
   static int shotCount = 1;
-  static final String[] ordinalIndicators = {"st", "nd", "rd", "th", "th"};
+  static final String[] ordinalIndicators = { "st", "nd", "rd", "th", "th" };
 
   static final String targetWord = chooseRandomWord(getWords());
 
   public static void main(String[] args) {
-    for (String guessWord : args) {
-      guessWord = guessWord.toUpperCase();
+    Scanner scanner = new Scanner(System.in);
+    String guessWord;
+
+    while (true) {
+      System.out.print("Enter your guess word: ");
+      guessWord = scanner.nextLine().toUpperCase();
 
       if (guessWord.length() != 5) {
         System.out.printf("Try %d (%s): The length of word must be five!\n", shotCount, guessWord);
       } else if (!isWordInDictionary(guessWord)) {
         System.out.printf("Try %d (%s): Word does not exist in the dictionary!\n",
-          shotCount, guessWord);
-        shotCount++;
+            shotCount, guessWord);
       } else if (guessWord.equals(targetWord)) {
         System.out.printf("Congratulations! You guessed right in %d%s shot!\n",
-          shotCount, ordinalIndicators[shotCount - 1]);
+            shotCount, ordinalIndicators[shotCount - 1]);
+        scanner.close();
         return;
       } else {
         checkWord(guessWord);
       }
 
       if (isGameEnded()) {
-        break;
+        System.out.println("You exceeded the maximum number of tries!");
+        System.out.println("You failed! The key word is " + targetWord + ".");
+        scanner.close();
+        return;
       }
     }
-    System.out.println("You exceeded the maximum number of tries!");
-    System.out.println("You failed! The key word is " + targetWord + ".");
   }
 
   static boolean isGameEnded() {
@@ -78,7 +84,7 @@ public class Wordle {
 
   static String[] getWords() {
     try (BufferedReader bufferedReader = new BufferedReader(
-      new FileReader("/Users/mtcnbzks/projects/Java/Wordle/src/main/resources/dict.txt"))) {
+        new FileReader("/Users/mtcnbzks/projects/Java/Wordle/src/main/resources/dict.txt"))) {
       return bufferedReader.lines().toArray(String[]::new);
     } catch (FileNotFoundException e) {
       System.err.println("Dictionary file not found!");
